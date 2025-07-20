@@ -1,5 +1,5 @@
 ## Define the project name
-`APP_NAME="wk-terraform"`
+`APP_NAME="wtf"`
 
 ## Create a 'build' folder to store the compiled binaries
 `mkdir -p build`
