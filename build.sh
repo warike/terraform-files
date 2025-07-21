@@ -7,7 +7,7 @@ APP_NAME="wtf" # Your application name
 # --- 1. Get the Version ---
 # Attempts to get the latest Git tag (e.g., "v1.0.0", "v2.3.4").
 # If no tags are found (e.g., a new repository without tags), it defaults to "1.0.0".
-VERSION=$(git describe --tags --abbrev=0 2>/dev/null || echo "1.0.0")
+VERSION=$(git describe --tags --abbrev=0 2>/dev/null || echo "v1.0.0")
 echo "Preparing build for version: ${VERSION}"
 
 # --- 2. Prepare the Build Directory ---

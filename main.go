@@ -280,7 +280,7 @@ func (m *model) generateProviderFile() error {
 				sb.WriteString("provider \"aws\" {\n")
 				sb.WriteString("  region  = local.aws_region\n")
 				sb.WriteString("  profile = local.aws_profile\n")
-				sb.WriteString("  default_tags = {\n")
+				sb.WriteString("  default_tags {\n")
 				sb.WriteString("   tags = local.tags\n")
 				sb.WriteString("  }\n")
 				sb.WriteString("}\n")

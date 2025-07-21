@@ -69,7 +69,7 @@ if [ -z "$TARGET_OS" ] || [ -z "$TARGET_ARCH" ]; then
     exit 1
 fi
 
-VERSION_NUMBER_ONLY=$(echo "$RELEASE_TAG" | sed 's/^v//')
+VERSION_NUMBER_ONLY=$(echo "$RELEASE_TAG")
 
 DOWNLOAD_FILE="${PROJECT_NAME}_${VERSION_NUMBER_ONLY}_${TARGET_OS}_${TARGET_ARCH}.zip"
 DOWNLOAD_URL="https://github.com/${GITHUB_ORG_REPO}/releases/download/${RELEASE_TAG}/${DOWNLOAD_FILE}"
