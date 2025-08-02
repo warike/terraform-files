@@ -29,7 +29,7 @@
 **/venv.bak/
 
 # Terraform
-**/**/.terraform/*
+**/**/infra/*
 **/**/.terraform/*
 **/*.tfstate
 **/*.hcl

@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"net/http"
 	"os"
 	"regexp"
@@ -291,6 +290,7 @@ func (m *model) generateProviderFile() error {
 				sb.WriteString("}\n")
 			case "azurerm":
 				sb.WriteString("provider \"azurerm\" {\n")
+				sb.WriteString("  subscription_id = local.azure_subscription_id\n")
 				sb.WriteString("  features {}\n")
 				sb.WriteString("}\n")
 			case "github":
@@ -322,6 +322,9 @@ func (m *model) generateProviderFile() error {
 			case "google":
 				sb.WriteString("  gcp_project_id = var.google_project_id\n")
 				sb.WriteString("  gcp_region     = var.google_region\n")
+			case "azurerm":
+				sb.WriteString("  azure_location            = var.azure_location\n")
+				sb.WriteString("  azure_subscription_id     = var.azure_subscription_id\n")
 			case "github":
 				sb.WriteString("  gh_owner           = var.gh_owner\n")
 				sb.WriteString("  gh_token           = var.gh_token\n")
@@ -335,16 +338,16 @@ func (m *model) generateProviderFile() error {
 
 	sb.WriteString("\n")
 	sb.WriteString("  tags = {\n")
-	sb.WriteString("    Project     = local.project_name\n")
-	sb.WriteString("    Environment = \"dev\"\n")
-	sb.WriteString("    Owner       = \"warike\"\n")
-	sb.WriteString("    CostCenter  = \"development\"\n")
-	sb.WriteString("    Terraform   = \"true\"\n")
+	sb.WriteString("    project     = local.project_name\n")
+	sb.WriteString("    environment = \"dev\"\n")
+	sb.WriteString("    owner       = \"warike\"\n")
+	sb.WriteString("    cost-center  = \"development\"\n")
+	sb.WriteString("    terraform   = \"true\"\n")
 	sb.WriteString("  }\n")
 
 	sb.WriteString("}\n")
 
-	return ioutil.WriteFile("provider.tf", []byte(sb.String()), 0644)
+	return os.WriteFile("provider.tf", []byte(sb.String()), 0644)
 }
 
 func (m *model) generateVariablesFile() error {
@@ -392,6 +395,13 @@ func (m *model) generateVariablesFile() error {
 				sb.WriteString("  type        = string\n")
 				sb.WriteString("  default     = \"East US\"\n")
 				sb.WriteString("}\n")
+
+				sb.WriteString("\n")
+				sb.WriteString("variable \"azure_subscription_id\" {\n")
+				sb.WriteString("  description = \"Azure subscription ID\"\n")
+				sb.WriteString("  type        = string\n")
+				sb.WriteString("  sensitive   = true\n")
+				sb.WriteString("}\n")
 			case "github":
 				sb.WriteString("\n")
 				sb.WriteString("variable \"gh_owner\" {\n")
@@ -423,7 +433,7 @@ func (m *model) generateVariablesFile() error {
 		}
 	}
 
-	return ioutil.WriteFile("variables.tf", []byte(sb.String()), 0644)
+	return os.WriteFile("variables.tf", []byte(sb.String()), 0644)
 }
 
 // Generate main.tf
@@ -433,7 +443,7 @@ func (m *model) generateMainFile() error {
 	sb.WriteString("// main.tf\n")
 	sb.WriteString("\n")
 
-	return ioutil.WriteFile("main.tf", []byte(sb.String()), 0644)
+	return os.WriteFile("main.tf", []byte(sb.String()), 0644)
 }
 
 // Generate terraform.tfvars based on selected providers
@@ -454,6 +464,7 @@ func (m *model) generateTfvarsFile() error {
 				sb.WriteString("google_region     = \"us-central1\"\n")
 			case "azurerm":
 				sb.WriteString("azure_location = \"East US\"\n")
+				sb.WriteString("azure_subscription_id = \"azure-subscription-id-goes-here\"\n")
 			case "github":
 				sb.WriteString("gh_owner = \"warike\"\n")
 				sb.WriteString("gh_token = \"your-github-token\"\n")
@@ -465,7 +476,7 @@ func (m *model) generateTfvarsFile() error {
 		}
 	}
 
-	return ioutil.WriteFile("terraform.tfvars", []byte(sb.String()), 0644)
+	return os.WriteFile("terraform.tfvars", []byte(sb.String()), 0644)
 }
 
 // Extract major.minor version from full version string
