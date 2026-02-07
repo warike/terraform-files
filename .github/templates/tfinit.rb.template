@@ -1,0 +1,28 @@
+# typed: false
+# frozen_string_literal: true
+
+class Tfinit < Formula
+  desc "A CLI to scaffold and manage Terraform projects"
+  homepage "https://github.com/warike/terraform-files"
+  version "__VERSION__"
+  license "MIT"
+
+  on_macos do
+    if Hardware::CPU.intel?
+      url "https://github.com/warike/terraform-files/releases/download/v__VERSION__/tfinit___VERSION___darwin_amd64.tar.gz"
+      sha256 "__DARWIN_AMD64_SHA__"
+    end
+    if Hardware::CPU.arm?
+      url "https://github.com/warike/terraform-files/releases/download/v__VERSION__/tfinit___VERSION___darwin_arm64.tar.gz"
+      sha256 "__DARWIN_ARM64_SHA__"
+    end
+  end
+
+  def install
+    bin.install "tfinit"
+  end
+
+  test do
+    system "#{bin}/tfinit --help"
+  end
+end
