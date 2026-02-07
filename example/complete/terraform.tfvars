@@ -1,0 +1,12 @@
+project_name = "complete"
+
+aws_region   = "us-west-2"
+aws_profile  = "default"
+google_project_id = "gcp-project-id-goes-here"
+google_region     = "us-central1"
+azure_location = "East US"
+azure_subscription_id = "azure-subscription-id-goes-here"
+gh_owner = "warike"
+gh_token = "your-github-token"
+vercel_api_token = "your-vercel-token"
+cloudflare_api_token = "your-cloudflare-token"

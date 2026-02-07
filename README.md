@@ -1,63 +1,78 @@
-# Terraform Quickstart Generator
+# tfinit - A Terraform Project Scaffolder & Updater
 
-A command-line interface (CLI) tool to quickly scaffold your Terraform projects by interactively selecting common cloud and service providers. This utility fetches the latest provider versions and generates essential Terraform configuration files, giving you a head start on your infrastructure-as-code journey.
+`tfinit` is a command-line interface (CLI) tool to quickly scaffold and manage your Terraform projects. It provides an interactive TUI to select common providers and also includes commands to keep your provider versions up-to-date.
 
 ## Features
 
-* **Interactive Provider Selection:** Choose from a list of popular Terraform providers (AWS, Google Cloud, Azure, GitHub, Vercel, Cloudflare).
+*   **Interactive Scaffolding:** Interactively select from a list of popular Terraform providers (AWS, Google Cloud, Azure, etc.) to generate your initial project files.
+*   **Version Management:** Automatically fetches the latest provider versions from the Terraform Registry.
+*   **Automated Updates:** A simple `update` command to parse your existing `provider.tf` and update versions to the latest available.
+*   **Standard File Generation:** Creates `provider.tf`, `variables.tf`, `main.tf`, and `terraform.tfvars` with sensible defaults.
 
-* **Latest Version Fetching:** Automatically retrieves the most recent stable version for each selected provider from the Terraform Registry.
+## Installation
 
-* **Automated File Generation:** Creates the following foundational Terraform files:
+### Homebrew (macOS & Linux)
 
-  * `provider.tf`: Defines required providers and their configurations.
+Once the project is published, you will be able to install it via Homebrew:
+```bash
+brew install warike/tools/tfinit
+```
 
-  * `variables.tf`: Declares input variables for your project.
+### From Source (Go)
 
-  * `main.tf`: A placeholder for your primary Terraform resources.
+Ensure you have a working Go environment (Go 1.18+).
 
-  * `terraform.tfvars`: An example file to set default values for your variables, including sensitive ones.
+```bash
+go install github.com/warike/terraform-files@latest
+```
 
-## Getting Started
+## Usage
 
-### Prerequisites
+### 1. Create a New Project
 
-* [Go](https://golang.org/doc/install) (version 1.16 or higher recommended)
+The `create` command launches an interactive terminal UI to help you scaffold a new Terraform project.
 
-### How to Use
+**To create a project in the current directory:**
 
-1. **Clone the repository (or save the code):**
+```bash
+tfinit create --name .
+```
 
-`git clone [https://github.com/warike/terraform-files.git](https://github.com/warike/terraform-files.git)`
+**To create a project in a new directory called `my-infra`:**
 
-*(If you just have the `.go` file, navigate to its directory.)*
+```bash
+tfinit create --name my-infra
+```
 
-2. **Run the application:**
+**Interactive Selection:**
 
-`go run .`
+*   Use the **arrow keys** (`↑`/`↓` or `j`/`k`) to navigate.
+*   Press **Spacebar** to select or deselect providers.
+*   Press **`y`** to confirm and generate the files.
+*   Press **`q`** or `Ctrl+C` to quit.
 
+### 2. Update Provider Versions
 
+The `update` command checks for newer versions of the providers listed in your `provider.tf` file and updates them automatically.
 
-3. **Interactive Selection:**
+**To update a project in the current directory:**
 
-* Use the **arrow keys** (or `j`/`k`) to navigate the provider list.
+```bash
+tfinit update --name .
+```
 
-* Press **Spacebar** (or `Enter`) to select or deselect a provider.
+**To update a project in the `my-infra` directory:**
 
-* Once you've made your selections, press **`y`** to generate the Terraform files.
+```bash
+tfinit update --name my-infra
+```
 
-* Press **`q`** or `Ctrl+C` to quit at any time.
+The tool will print a list of providers that were updated.
 
-## Generated Files Overview
+## Contributing
 
-* `provider.tf`: Configures the `terraform` block with `required_providers` and sets up the `provider` blocks with `locals` for common variables like regions, project IDs, and API tokens.
+Contributions are welcome! Please see the [Contributing Guidelines](CONTRIBUTING.md) for more details on how to set up your development environment and submit pull requests.
 
-* `variables.tf`: Defines the input variables used in `provider.tf` and other potential configurations, including sensitive variables where appropriate.
+## License
 
-* `main.tf`: An empty file ready for you to add your infrastructure resources.
-
-* `terraform.tfvars`: Provides example values for the variables defined in `variables.tf`. **Remember to replace placeholder values (e.g., `your-github-token`) with your actual credentials or desired settings.**
-
-## Customization
-
-The generated files are a solid starting point. Feel free to modify them to fit your specific project requirements, add more resources, or integrate with additional Terraform modules
+This project is licensed under the [MIT License](LICENSE).

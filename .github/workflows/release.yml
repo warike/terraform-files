@@ -1,0 +1,132 @@
+# .github/workflows/release.yml
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*' # Trigger on tags like v1.0.0
+
+permissions:
+  contents: write
+  id-token: write
+
+jobs:
+  goreleaser:
+    runs-on: ubuntu-latest
+    outputs:
+      tag_name: ${{ steps.vars.outputs.tag }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Set up Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: '1.21'
+
+      - name: Install Cosign
+        uses: sigstore/cosign-installer@main
+
+      - name: Extract tag name
+        id: vars
+        run: echo "tag=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+
+      - name: Run GoReleaser
+        uses: goreleaser/goreleaser-action@v4
+        with:
+          version: latest
+          args: release --clean
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  update-homebrew:
+    needs: goreleaser
+    runs-on: ubuntu-latest
+    steps:
+      - name: Generate GitHub App token
+        id: app-token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ secrets.APP_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+          owner: warike
+          repositories: homebrew-tools
+
+      - name: Download release assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ needs.goreleaser.outputs.tag_name }}
+        run: |
+          gh release download "$TAG" --pattern "checksums.txt" --pattern "*_darwin_amd64.tar.gz" --pattern "*_darwin_arm64.tar.gz"
+          echo "Downloaded assets for tag $TAG"
+
+      - name: Update Homebrew formula
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          TAG: ${{ needs.goreleaser.outputs.tag_name }}
+        run: |
+          set -e # Exit on error
+          VERSION="${TAG#v}"
+
+          # Extract checksums
+          DARWIN_AMD64_SHA=$(grep "_darwin_amd64.tar.gz" checksums.txt | awk '{print $1}')
+          DARWIN_ARM64_SHA=$(grep "_darwin_arm64.tar.gz" checksums.txt | awk '{print $1}')
+          
+          if [ -z "$DARWIN_AMD64_SHA" ] || [ -z "$DARWIN_ARM64_SHA" ]; then
+            echo "::error::Could not extract checksums from checksums.txt"
+            exit 1
+          fi
+
+          echo "Updating Homebrew formula to version ${VERSION}"
+          echo "Darwin AMD64 SHA: ${DARWIN_AMD64_SHA}"
+          echo "Darwin ARM64 SHA: ${DARWIN_ARM64_SHA}"
+          
+          # Clone the homebrew-tools repository
+          git clone https://x-access-token:${GH_TOKEN}@github.com/warike/homebrew-tools.git /tmp/homebrew-tools
+          cd /tmp/homebrew-tools
+
+          # Create or update the formula file
+          cat << EOF > Formula/tfinit.rb
+# typed: false
+# frozen_string_literal: true
+
+class Tfinit < Formula
+  desc "A CLI to scaffold and manage Terraform projects"
+  homepage "https://github.com/warike/terraform-files"
+  version "${VERSION}"
+  license "MIT"
+
+  on_macos do
+    if Hardware::CPU.intel?
+      url "https://github.com/warike/terraform-files/releases/download/v${VERSION}/terraform-files_${VERSION}_darwin_amd64.tar.gz"
+      sha256 "${DARWIN_AMD64_SHA}"
+    end
+    if Hardware::CPU.arm?
+      url "https://github.com/warike/terraform-files/releases/download/v${VERSION}/terraform-files_${VERSION}_darwin_arm64.tar.gz"
+      sha256 "${DARWIN_ARM64_SHA}"
+    end
+  end
+
+  def install
+    bin.install "tfinit"
+  end
+
+  test do
+    system "#{bin}/tfinit --help"
+  end
+end
+EOF
+
+          git config user.name "tfinit-release-bot[bot]"
+          git config user.email "bot@users.noreply.github.com"
+          git add Formula/tfinit.rb
+          
+          # Commit only if there are changes
+          if git diff --staged --quiet; then
+            echo "No changes to the formula file. Skipping commit."
+          else
+            git commit -m "feat: bump tfinit to ${VERSION}"
+            git push
+          fi

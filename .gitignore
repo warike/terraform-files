@@ -1,99 +1,11 @@
-# Node modules (Remix)
-**/node_modules/
-**/npm-debug.log
-**/yarn-error.log
-**/.pnpm-debug.log
+# Go binaries
+build/
+wtf
 
-# Remix build files
-**/**/build/
+# IDEs and local configuration
+.vscode/
+.idea/
 
-# Python (FastAPI)
-**/*.pyc
-**/*.pyo
-**/__pycache__/
-**/*.pyd
-**/*.db
-**/*.sqlite
-**/.env
-**/.env.*
-**/*.log
-**/*.pot
-
-# FastAPI migrations
-**/api/migrations/
-
-# Virtual environments (Python)
-**/venv/
-**/env/
-**/env.bak/
-**/venv.bak/
-
-# Terraform
-**/**/infra/*
-**/**/.terraform/*
-**/*.tfstate
-**/*.hcl
-**/*.tfstate.backup
-**/*.tfvars
-**/override.tf
-**/override.tf.json
-**/terraform.tfstate
-**/terraform.tfstate.*.backup
-
-# Local IDEs and editors
-**/.idea/
-**/.vscode/
-
-# macOS
-**/.DS_Store
-
-# Windows
-**/Thumbs.db
-
-# iOS/Xcode
-# Xcode
-*.pbxuser
-!default.pbxuser
-*.mode1v3
-!default.mode1v3
-*.mode2v3
-!default.mode2v3
-*.perspectivev3
-!default.perspectivev3
-xcuserdata/
-*.moved-aside
-DerivedData/
-*.hmap
-*.ipa
-*.dSYM.zip
-*.dSYM
-
-# CocoaPods
-Pods/
-*.xcscmblueprint
-*.xccheckout
-Podfile.lock
-
-# Carthage
-Carthage/Build/
-
-# fastlane
-fastlane/report.xml
-fastlane/Preview.html
-fastlane/screenshots/**/*.png
-fastlane/test_output
-
-# App Distribution
-*.ipa
-*.app
-
-# Other iOS related
-*.storyboardc
-*.stringsdict
-*.strings
-*.framework
-*.xcodeproj/xcuserdata/
-*.xcworkspace/xcuserdata/
-
-# Swift Package Manager
-.build/
+# OS-specific files
+.DS_Store
+Thumbs.db

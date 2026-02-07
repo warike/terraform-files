@@ -1,0 +1,18 @@
+# .github/dependabot.yml
+
+version: 2
+updates:
+  # Enable version updates for Go modules
+  - package-ecosystem: "gomod"
+    directory: "/" # Location of package manifests
+    schedule:
+      interval: "daily"
+    # Add labels to Dependabot PRs
+    labels:
+      - "dependencies"
+      - "automated"
+    # Group gomod updates to reduce noise
+    groups:
+      gomod:
+        patterns:
+          - "*"
