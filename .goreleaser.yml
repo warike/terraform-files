@@ -35,8 +35,9 @@ signs:
   - cmd: cosign
     args:
       - "sign-blob"
-      - "--output-signature=${signature}"
       - "${artifact}"
+      - "--bundle=${signature}"
       - "--yes"
     artifacts: checksum
+    signature: "${artifact}.bundle"
     output: true
