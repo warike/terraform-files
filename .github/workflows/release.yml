@@ -98,11 +98,20 @@ jobs:
           cd /tmp/homebrew-tools
           git config user.name "tfinit-release-bot[bot]"
           git config user.email "bot@users.noreply.github.com"
+
+          BRANCH="chore/bump-tfinit-${VERSION}"
+          git checkout -b "$BRANCH"
           git add Formula/tfinit.rb
 
           if git diff --staged --quiet; then
-            echo "No changes to the formula file. Skipping commit."
+            echo "No changes to the formula file. Skipping."
           else
             git commit -m "chore: bump tfinit to ${VERSION}"
-            git push
+            git push -u origin "$BRANCH"
+            gh pr create \
+              --repo warike/homebrew-tools \
+              --title "chore: bump tfinit to ${VERSION}" \
+              --body "Automated formula update for tfinit v${VERSION}" \
+              --base main \
+              --head "$BRANCH"
           fi
