@@ -100,11 +100,11 @@ class Tfinit < Formula
 
   on_macos do
     if Hardware::CPU.intel?
-      url "https://github.com/warike/terraform-files/releases/download/v${VERSION}/terraform-files_${VERSION}_darwin_amd64.tar.gz"
+      url "https://github.com/warike/terraform-files/releases/download/v${VERSION}/tfinit_${VERSION}_darwin_amd64.tar.gz"
       sha256 "${DARWIN_AMD64_SHA}"
     end
     if Hardware::CPU.arm?
-      url "https://github.com/warike/terraform-files/releases/download/v${VERSION}/terraform-files_${VERSION}_darwin_arm64.tar.gz"
+      url "https://github.com/warike/terraform-files/releases/download/v${VERSION}/tfinit_${VERSION}_darwin_arm64.tar.gz"
       sha256 "${DARWIN_ARM64_SHA}"
     end
   end
